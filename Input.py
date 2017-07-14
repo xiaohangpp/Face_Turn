@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import glob
 
 class read_function(object):
 	def __init__(self, batch_size, filename, label):
@@ -22,3 +23,16 @@ class read_function(object):
 
 #read_data = x.read_png()
 #image_batch, image_label = x.input_pipeline(read_data)
+
+def __apply__data(directory):
+	filename = list();
+	label = list();
+	for name in glob.glob(directory+'/*/*.png'):
+		filename.append(name)
+		idx = name.find("/")
+		pose = name(idx(-2:-1));
+		label.append(int(pose))
+	x = read_function(1, filename, label)
+	image = x.read_png();
+	image_batch, image_label = x.input_pipeline(image)
+	return image_batch, image_label
