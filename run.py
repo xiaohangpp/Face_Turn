@@ -17,9 +17,9 @@ def train():
 
     train_op = model.train(cost)
 
-    init = tf.global_variables_intializer()
+    init = tf.global_variables_initializer()
 
-    sess = tf.Session(config.tf.ConfigProto(log_device_placement = True))
+    sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
     sess.run(init)
 

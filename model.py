@@ -45,54 +45,51 @@ def model_forward(image, val):
 	bias_4 = bias_variable([256])
 	layer_4_result = tf.nn.relu(tf.add(layer_4, bias_4))
 
-	weight_layer_5 = variable([3, 3, 256, 512], name = 'w5', initialize = 0.005)
-	layer_5 = conv(layer_4_result, weight_layer_5)
-	bias_5 = bias_variable([512])
+	layer_4_pool = tf.nn.max_pool(layer_4_result, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'SAME')
+
+	weight_layer_5 = variable([3, 3, 256, 256], name = 'w5', initialize = 0.005)
+	layer_5 = conv(layer_4_pool, weight_layer_5)
+	bias_5 = bias_variable([256])
 	layer_5_result = tf.nn.relu(tf.add(layer_5, bias_5))
 
-	weight_layer_6 = variable([3, 3, 512, 512], name = 'w6', initialize = 0.005)
+	weight_layer_6 = variable([3, 3, 256, 256], name = 'w6', initialize = 0.005)
 	layer_6 = conv(layer_5_result, weight_layer_6)
-	bias_6 = bias_variable([512])
+	bias_6 = bias_variable([256])
 	layer_6_result = tf.nn.relu(tf.add(layer_6, bias_6))
 
-	weight_layer_7 = variable([3, 3, 512, 512], name = 'w7', initialize = 0.005)
+	weight_layer_7 = variable([3, 3, 256, 256], name = 'w7', initialize = 0.005)
 	layer_7 = conv(layer_6_result, weight_layer_7)
-	bias_7 = bias_variable([512])
+	bias_7 = bias_variable([256])
 	layer_7_result = tf.nn.relu(tf.add(layer_7, bias_7))
 
-	weight_layer_8 = variable([3, 3, 512, 512], name = 'w8', initialize = 0.005)
+	weight_layer_8 = variable([3, 3, 256, 512], name = 'w8', initialize = 0.005)
 	layer_8 = conv(layer_7_result, weight_layer_8)
 	bias_8 = bias_variable([512])
 	layer_8_result = tf.nn.relu(tf.add(layer_8, bias_8))
 
-	weight_layer_9 = variable([3, 3, 512, 1024], name = 'w9', initialize = 0.005)
-	layer_9 = conv(layer_8_result, weight_layer_9)
-	bias_9 = bias_variable([1024])
-	layer_9_result = tf.nn.relu(tf.add(layer_9, bias_9))
+	flatten = tf.reshape(layer_8_result, [-1, 512 * 91 * 91])
 
-	flatten = tf.reshape(layer_9_result, [-1, 1024 * 182 * 182])
-
-	full_weight1 = variable([182*182 * 1024, 1024], 'FC1', initialize = 0.005)
-	perceptron1 = tf.add(tf.matmul(flatten, full_weight1), bias_variable([1024]))
+	full_weight1 = variable([512 * 91 * 91, 512], 'FC1', initialize = 0.005)
+	perceptron1 = tf.add(tf.matmul(flatten, full_weight1), bias_variable([512]))
 	layer_percep1 = tf.nn.relu(perceptron1)
 
-	full_weight2 = variable([1024, 1024], 'FC2', initialize = 0.005)
-	perceptron2 = tf.add(tf.matmul(layer_percep1, full_weight2), bias_variable([1024]))
+	full_weight2 = variable([512, 512], 'FC2', initialize = 0.005)
+	perceptron2 = tf.add(tf.matmul(layer_percep1, full_weight2), bias_variable([512]))
 	layer_percep2 = tf.nn.dropout(tf.nn.relu(perceptron2), val)
 
-	full_weight3 = variable([1024, 1024], 'FC3', initialize = 0.005)
-	perceptron3 = tf.add(tf.matmul(layer_percep2, full_weight3), bias_variable([1024]))
+	full_weight3 = variable([512, 256], 'FC3', initialize = 0.005)
+	perceptron3 = tf.add(tf.matmul(layer_percep2, full_weight3), bias_variable([256]))
 	layer_percep3 = tf.nn.dropout(tf.nn.relu(perceptron3), val)
 
-	full_weight4 = variable([1024, 13], 'FC4', initialize = 0.005)
+	full_weight4 = variable([256, 13], 'FC4', initialize = 0.005)
 	result = tf.add(tf.matmul(layer_percep3, full_weight4), bias_variable([13]))
 	softmax_result = tf.nn.softmax(result)
 	return softmax_result, result
 
 def model_loss(result, labels):
-	tf.cast(labels, tf.int64)
-	tf.one_hot(labels, 13)
-	cross_entropy_loss = tf.nn.softmax_cross_entropy_with_logits(labels = labels, logits = result)
+	labels = tf.cast(labels, tf.int64)
+	#tf.one_hot(labels, 13)
+	cross_entropy_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = labels, logits = result)
 	cost = tf.reduce_mean(cross_entropy_loss)
 	return cost
 
