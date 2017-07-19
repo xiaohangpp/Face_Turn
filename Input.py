@@ -29,7 +29,6 @@ class read_function(object):
 		image_batch, image_label = tf.train.batch([image, label], batch_size = self.batch_size, capacity = self.batch_size)
 		#return image_batch, tf.reshape(image_label, [self.batch_size])
 		#print(image_batch.shape)
-	#	print(image_label.shape)
 		return image_batch, image_label
 
 
@@ -56,6 +55,7 @@ def __apply__data(directory, batch_size):
 		filename.append(name)
 		idx = find_all_sub(name, "/")
 		pose = name[idx[-2]+1:idx[-1]]
+		pose = int(pose)
 		#label.append(int(pose))
 		label.append(pose)
 	#print(np.array(filename).shape)
@@ -68,6 +68,7 @@ def __apply__data(directory, batch_size):
 
 	input_queue = tf.train.slice_input_producer([filename,label])
 	image, label = x.read_png(input_queue)
+	#xxx[2]=1
 
 	#print(np.array(image).shape)
 	image_batch, image_label = x.input_pipeline(image, label)
