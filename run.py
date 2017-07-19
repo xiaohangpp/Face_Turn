@@ -3,7 +3,7 @@ import Input
 import model
 from six.moves import xrange
 import tensorflow as tf
-import time
+import time, os
 from datetime import datetime
 
 directory = '/media/luolab/DATA/Face_Turn/TrainDataset_182/'
@@ -33,7 +33,7 @@ def train():
 
     tf.train.start_queue_runners(sess = sess)
 
-    train_dir = "nn-data"
+    train_dir = "Model_Data"
 
     summary_writer = tf.summary.FileWriter(train_dir, sess.graph)
 
@@ -41,7 +41,7 @@ def train():
             start_time = time.time()
             loss_value, _, debug, labels = sess.run([cost, train_op, softmax_result, image_label])
             duration = time.time() - start_time
-            if step % 100 == 0:
+            if step % 1 == 0:
                 examples_per_sec = 1 / duration
                 sec_per_batch = float(duration)
                 format_str = ('%s: step %d, (%.3f examples/sec; %.3f ''sec/batch) loss = %.3f')
