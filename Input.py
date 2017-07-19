@@ -62,6 +62,7 @@ def __apply__data(directory, batch_size):
 	#print(np.array(label).shape)
 	x = read_function(batch_size, filename, label)
 
+
 	#filename_queue = tf.train.string_input_producer(filename)
 	#label_queue = tf.train.string_input_producer(label)
 	#image, label = x.read_png(filename_queue, label_queue)

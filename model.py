@@ -125,7 +125,7 @@ def model_forward(image, val):
 		_activation_summary(result)
 
 	softmax_result = tf.nn.softmax(result)
-	return softmax_result, result
+	#return softmax_result, result
 
 	layer1v = layer_1_result[0:1, :, :, 0:16]
 	layer2v = layer_2_pool[0:1, :, :, 0:32]
@@ -149,17 +149,33 @@ def model_forward(image, val):
 	"""visualization1 = tf.concat(2, [layer1v])
 	list_v1 = tf.split(0, 16, visualization1)
 	visualization1 = tf.concat(1, list_v1)
-	tf.image_summary("filtered_images1", visualization1)
+	v_min = tf.reduce_min(visualization1)
+	v_max = tf.reduce_max(visualization1)
+	visualization1 = (visualization1-v_min)/(v_max-v_min)
+	visualization1 = tf.image.convert_image_dtype(visualization1, dtype.uint8)
+	tf.image_summary("filtered_images1", visualization1, max_outputs=5)"""
 
-	visualization2 = tf.concat(2, [layer2v, layer3v])
-	list_v2 = tf.split(0, 16, visualization2)
-	visualization2 = tf.concat(1, list_v2)
-	tf.image_summary("filtered_images2", visualization2)
+	visualization1 = tf.concat([layer1v, layer1v], 0)
+	list_v1 = tf.split(visualization1, 16, 0)
+	visualization1 = tf.concat(list_v1, 1)
+	#tf.image_summary("filtered_images1", visualization1, max_outputs=512)
 
-	visualization3 = tf.concat(2, [layer4v, layer5v, layer6v, layer7v, layer8v])
-	list_v3 = tf.split(0, 16, visualization3)
-	visualization3 = tf.concat(1, list_v3)
-	tf.image_summary("filtered_images3", visualization3)"""
+
+	visualization2 = tf.concat([layer2v, layer3v], 0)
+	list_v2 = tf.split(visualization2, 16, 0)
+	visualization2 = tf.concat(list_v2, 1)
+    	#tf.image_summary("filtered_images2", visualization2, max_outputs=512)
+
+	visualization3 = tf.concat([layer4v, layer5v, layer6v, layer7v, layer8v], 0)
+	list_v3 = tf.split(visualization3, 16, 0)
+	visualization3 = tf.concat(list_v3, 1)
+	#tf.image_summary("filtered_images3", visualization3, max_outputs=512)
+
+    	#return softmax_result, result, visualization1, visualization2, visualization3
+	return softmax_result, result, visualization1, visualization2, visualization3
+
+
+
 
 def model_loss(result, labels):
 	labels = tf.cast(labels, tf.int64)

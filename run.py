@@ -6,7 +6,7 @@ import tensorflow as tf
 import time, os
 from datetime import datetime
 
-directory = '/media/luolab/DATA/Face_Turn/TrainDataset_182/'
+directory = '/home/luolab/Desktop/Face_Turn/TrainDataset_182/'
 batch_size = 5
 dropout_val = 0.75
 
@@ -15,11 +15,16 @@ def train():
 
     tf.summary.image("Image", image_batch, max_outputs=5, collections=None)
 
-    softmax_result, result = model.model_forward(image_batch, dropout_val)
+    softmax_result, result, visualization1, visualization2, visualization3 = model.model_forward(image_batch, dropout_val)
 
     cost = model.model_loss(result, image_label)
 
     train_op = model.train(cost)
+
+
+    tf.summary.image("filtered_images1", visualization1, max_outputs=512)
+    tf.summary.image("filtered_images2", visualization2, max_outputs=512)
+    tf.summary.image("filtered_images3", visualization3, max_outputs=512)
 
     summary_op = tf.summary.merge_all()
 
@@ -47,10 +52,11 @@ def train():
                 format_str = ('%s: step %d, (%.3f examples/sec; %.3f ''sec/batch) loss = %.3f')
                 print (format_str % (datetime.now(), step, examples_per_sec, sec_per_batch, loss_value))
 
-            summary_str = sess.run(summary_op)
-            summary_writer.add_summary(summary_str, step)
-            checkpoint_path = os.path.join(train_dir, 'model')
-            saver.save(sess, checkpoint_path)
+            if step % 5 == 0:
+                summary_str = sess.run(summary_op)
+                summary_writer.add_summary(summary_str, step)
+                checkpoint_path = os.path.join(train_dir, 'model')
+                saver.save(sess, checkpoint_path)
 
 def main(argv = None):
         train()
