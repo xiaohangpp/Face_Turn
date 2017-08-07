@@ -41,7 +41,7 @@ def model_forward(image, val):
 
 		layer_2_1 = conv(layer_1_result, weight_layer_2)
 
-		bias_2_1 = bias_variable([32])
+		bias_2_1 = bias_variable([16])
 
 		layer_2_1_result = tf.nn.relu(tf.add(layer_2_1, bias_2_1))
 
