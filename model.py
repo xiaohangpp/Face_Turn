@@ -110,7 +110,7 @@ def model_forward(image, val):
 	#return softmax_result, result
 
 	layer1v = layer_1_result[0:1, :, :, 0:16]
-	layer2v = layer_2_pool[0:1, :, :, 0:32]
+	layer2v = layer_2_3_pool[0:1, :, :, 0:32]
 	layer3v = layer_3_result[0:1, :, :, 0:64]
 	layer4v = layer_4_pool[0:1, :, :, 0:128]
 
