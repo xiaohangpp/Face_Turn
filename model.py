@@ -80,7 +80,7 @@ def model_forward(image, val):
 
 
 	with tf.variable_scope("FC1"):
-		flatten = tf.reshape(layer_8_result, [-1, 128 * 46 * 46])
+		flatten = tf.reshape(layer_4_pool, [-1, 128 * 46 * 46])
 
 		full_weight1 = variable([128 * 46 * 46, 512], 'FC1', initialize = 0.005)
 		perceptron1 = tf.add(tf.matmul(flatten, full_weight1), bias_variable([512]))
