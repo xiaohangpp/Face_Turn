@@ -36,8 +36,8 @@ def model_forward(image, val):
 
 		_activation_summary(layer_1_result)
 
-	with tf.variable_scope("conv2"):
-		weight_layer_2 = variable([3, 3, 16, 32], name = 'w2', initialize = 0.005)
+	with tf.variable_scope("dense1"):
+		weight_layer_2 = variable([3, 3, 16, 16], name = 'w2', initialize = 0.005)
 
 		layer_2_1 = conv(layer_1_result, weight_layer_2)
 
@@ -45,19 +45,24 @@ def model_forward(image, val):
 
 		layer_2_1_result = tf.nn.relu(tf.add(layer_2_1, bias_2_1))
 
-		layer_2_2 = conv(layer2_1_result, weight_layer_1)
+		dense_weight_1 =  variable([3, 3, 16, 16], name = 'd1', initialize = 0.005)
+
+		layer_2_2 = conv(layer_2_1_result, dense_weight_1)
 
 		bias_2_2 = bias_variable([16])
 		layer_2_2_result = tf.nn.relu(tf.add(layer_2_2, bias_2_2))
 
+		layer_2_3 = conv(layer_2_2_result, weight_layer_2)
+		bias_2_3 = bias_variable([16])
+		layer_2_3_result = tf.nn.relu(tf.add(layer_2_3, bias_2_3))
 		#_activation_summary(layer_2_1_result)
-		#_activation_summary(layer_2_2_result)
+		_activation_summary(layer_2_3_result)
 
 		layer_2_2_pool = tf.nn.max_pool(layer_2_2_result, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'SAME')
 
 	with tf.variable_scope("conv3"):
-		weight_layer_3 = variable([1, 1, 32, 64], name = 'w3', initialize = 0.005)
-		layer_3 = conv(layer_2_2_pool, weight_layer_3)
+		weight_layer_3 = variable([1, 1, 16, 64], name = 'w3', initialize = 0.005)
+		layer_3 = conv(layer_2_3_pool, weight_layer_3)
 		bias_3 = bias_variable([64])
 		layer_3_result = tf.nn.relu(tf.add(layer_3, bias_3))
 

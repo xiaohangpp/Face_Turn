@@ -6,8 +6,8 @@ import tensorflow as tf
 import time, os
 from datetime import datetime
 
-directory = '/home/luolab/Desktop/Face_Turn/TrainDataset_182/'
-batch_size = 5
+directory = 'TrainDataset_182'
+batch_size = 1
 dropout_val = 0.75
 
 def train():
