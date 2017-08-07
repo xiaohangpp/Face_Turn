@@ -58,7 +58,7 @@ def model_forward(image, val):
 		#_activation_summary(layer_2_1_result)
 		_activation_summary(layer_2_3_result)
 
-		layer_2_2_pool = tf.nn.max_pool(layer_2_2_result, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'SAME')
+		layer_2_3_pool = tf.nn.max_pool(layer_2_3_result, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'SAME')
 
 	with tf.variable_scope("conv3"):
 		weight_layer_3 = variable([1, 1, 16, 64], name = 'w3', initialize = 0.005)
