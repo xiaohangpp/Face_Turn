@@ -67,7 +67,7 @@ def __apply__data(directory, batch_size):
 	#label_queue = tf.train.string_input_producer(label)
 	#image, label = x.read_png(filename_queue, label_queue)
 
-	input_queue = tf.train.slice_input_producer([filename,label])
+	input_queue = tf.train.slice_input_producer([filename, label])
 	image, label = x.read_png(input_queue)
 	#xxx[2]=1
 
