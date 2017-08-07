@@ -91,7 +91,7 @@ def model_forward(image, val):
 	with tf.variable_scope("FC2"):
 		full_weight2 = variable([512, 256], 'FC2', initialize = 0.005)
 		perceptron2 = tf.add(tf.matmul(layer_percep1, full_weight2), bias_variable([256]))
-
+		layer_percep2 = tf.nn.relu(perceptron2)
 		_activation_summary(layer_percep2)
 
 	with tf.variable_scope("FC3"):
