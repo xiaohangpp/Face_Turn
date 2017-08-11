@@ -7,7 +7,7 @@ import time, os
 from datetime import datetime
 
 directory = 'TrainDataset_182'
-batch_size = 48
+batch_size = 120
 dropout_val = 0.5
 
 def train():

@@ -27,9 +27,9 @@ def conv(matrix, weights, padding = 'SAME'):
 
 def model_forward(image, val):
 	with tf.variable_scope("conv1"):
-		image_matrix = tf.reshape(image, [-1, 182, 182, 1])
+		image_matrix = tf.reshape(image, [-1, 182, 182, 3])
 
-		weight_layer_1 = variable([3, 3, 1, 16], name = 'w1', initialize = 0.005)
+		weight_layer_1 = variable([3, 3, 3, 16], name = 'w1', initialize = 0.005)
 		layer_1 = conv(image_matrix, weight_layer_1)
 		bias_1 = bias_variable([16])
 		layer_1_result = tf.nn.relu(tf.add(layer_1, bias_1))
@@ -55,14 +55,18 @@ def model_forward(image, val):
 		layer_2_3 = conv(layer_2_2_result, weight_layer_2)
 		bias_2_3 = bias_variable([16])
 		layer_2_3_result = tf.nn.relu(tf.add(layer_2_3, bias_2_3))
-		#_activation_summary(layer_2_1_result)
-		_activation_summary(layer_2_3_result)
 
-		layer_2_3_pool = tf.nn.max_pool(layer_2_3_result, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'SAME')
+        	layer_2_4 = conv(layer_2_3_result, dense_weight_1)
+        	bias_2_4 = bias_variable([16])
+        	layer_2_4_result = tf.nn.relu(tf.add(layer_2_4, bias_2_4))
+
+		layer_2_4_pool = tf.nn.max_pool(layer_2_4_result, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'SAME')
+
+        _activation_summary(layer_2_4_result)
 
 	with tf.variable_scope("conv3"):
 		weight_layer_3 = variable([1, 1, 16, 64], name = 'w3', initialize = 0.005)
-		layer_3 = conv(layer_2_3_pool, weight_layer_3)
+		layer_3 = conv(layer_2_4_pool, weight_layer_3)
 		bias_3 = bias_variable([64])
 		layer_3_result = tf.nn.relu(tf.add(layer_3, bias_3))
 
@@ -110,7 +114,7 @@ def model_forward(image, val):
 	#return softmax_result, result
 
 	layer1v = layer_1_result[0:1, :, :, 0:16]
-	layer2v = layer_2_3_pool[0:1, :, :, 0:32]
+	layer2v = layer_2_4_pool[0:1, :, :, 0:16]
 	layer3v = layer_3_result[0:1, :, :, 0:64]
 	layer4v = layer_4_pool[0:1, :, :, 0:128]
 
@@ -152,15 +156,16 @@ def model_forward(image, val):
 
 def model_loss(result, labels):
 	labels = tf.cast(labels, tf.int64)
-	#tf.one_hot(labels, 13)
 	cross_entropy_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = labels, logits = result)
 	cost = tf.reduce_mean(cross_entropy_loss)
-	_activation_summary(cost)
+    	tf.add_to_collection('loss', cost)
+    	total_loss = tf.add_n(tf.get_collection('loss'), name='total_loss')
+	_activation_summary(total_loss)
 	return cost
 
 def train(cost):
 	global_step = tf.Variable(0, trainable=False)
-	starter_learning_rate = 0.005
+	starter_learning_rate = 0.5
 	rate = tf.train.exponential_decay(starter_learning_rate, global_step, 1000, 0.96, staircase=True)
 	with tf.device('/gpu:0'):
 		gradient_apply = tf.train.GradientDescentOptimizer(learning_rate = rate).minimize(cost)

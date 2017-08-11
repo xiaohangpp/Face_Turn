@@ -15,8 +15,8 @@ class read_function(object):
 		image = tf.image.decode_png(value)
 		# convert data type
 		image = tf.image.convert_image_dtype(image, dtype = tf.float32)
-		image = tf.image.rgb_to_grayscale(image)
-		image.set_shape([182, 182, 1])
+		#image = tf.image.rgb_to_grayscale(image)
+		image.set_shape([182, 182, 3])
 
 		#key_l, value_l = label_reader.read(label_queue)
 		#label = tf.decode_raw(value_l, tf.int64)
