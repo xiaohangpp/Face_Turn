@@ -52,7 +52,7 @@ def train():
                 format_str = ('%s: step %d, (%.3f examples/sec; %.3f ''sec/batch) loss = %.3f')
                 print (format_str % (datetime.now(), step, examples_per_sec, sec_per_batch, loss_value))
 
-            if step % 1000 == 0:
+            if step % 100 == 0:
                 summary_str = sess.run(summary_op)
                 summary_writer.add_summary(summary_str, step)
                 checkpoint_path = os.path.join(train_dir, 'model')
